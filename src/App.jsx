@@ -6,7 +6,6 @@ import {
   Eye,
   EyeOff,
   KeyRound,
-  LockKeyhole,
   Pencil,
   Plus,
   Save,
@@ -17,17 +16,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardSummary, defaultPasswords, socialGroups, softwareLinks, websiteLinks } from './data/dashboardData.js';
-
-const vaultStorageKey = 'fjgroup-ceo-vault-v2';
-
-function getStoredPasswords() {
-  try {
-    const stored = localStorage.getItem(vaultStorageKey);
-    return stored ? JSON.parse(stored) : defaultPasswords;
-  } catch {
-    return defaultPasswords;
-  }
-}
 
 function Launcher({ stage }) {
   return (
@@ -234,15 +222,11 @@ function SectionTitle({ eyebrow, title, count }) {
 }
 
 function Vault() {
-  const [records, setRecords] = useState(getStoredPasswords);
+  const [records, setRecords] = useState(defaultPasswords);
   const [editingId, setEditingId] = useState(null);
   const [visible, setVisible] = useState({});
   const [copied, setCopied] = useState('');
   const draft = useMemo(() => records.find((record) => record.id === editingId), [editingId, records]);
-
-  useEffect(() => {
-    localStorage.setItem(vaultStorageKey, JSON.stringify(records));
-  }, [records]);
 
   function updateRecord(id, field, value) {
     setRecords((current) => current.map((record) => (record.id === id ? { ...record, [field]: value } : record)));
@@ -270,12 +254,14 @@ function Vault() {
           <div>
             <p className="section-eyebrow">Saved passwords</p>
             <h2>Editable access vault</h2>
-            <span><ShieldCheck className="h-4 w-4" /> Saved locally in this browser</span>
+            <span><ShieldCheck className="h-4 w-4" /> Static project data for Vercel</span>
           </div>
-          <button className="gold-button" type="button" onClick={addRecord}>
-            <Plus className="h-4 w-4" />
-            Add login
-          </button>
+          <div className="vault-toolbar">
+            <button className="gold-button" type="button" onClick={addRecord}>
+              <Plus className="h-4 w-4" />
+              Add login
+            </button>
+          </div>
         </div>
         <div className="vault-list">
           {records.map((record) => {

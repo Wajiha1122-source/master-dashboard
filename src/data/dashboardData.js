@@ -99,7 +99,7 @@ export const dashboardSummary = [
 
 export const defaultPasswords = [
   {
-    id: crypto.randomUUID(),
+    id: 'axon-erp',
     label: 'Axon ERP',
     company: 'Fjgroup',
     username: 'add-login-here',
@@ -108,7 +108,7 @@ export const defaultPasswords = [
     notes: 'Primary ERP access.',
   },
   {
-    id: crypto.randomUUID(),
+    id: 'tele-sales',
     label: 'Tele-Sales',
     company: 'Fjgroup',
     username: 'add-login-here',
@@ -117,7 +117,7 @@ export const defaultPasswords = [
     notes: 'Sales software login.',
   },
   {
-    id: crypto.randomUUID(),
+    id: 'performance-dashboard',
     label: 'Performance Dashboard',
     company: 'Fjgroup',
     username: 'add-login-here',
