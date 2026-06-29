@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   cacheDir: 'node_modules/.vite',
   server: {
+    proxy: {
+      '/api': 'http://localhost:5000',
+    },
     fs: {
       strict: true,
       allow: ['.'],
