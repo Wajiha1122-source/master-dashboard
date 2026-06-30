@@ -261,6 +261,7 @@ function SoftwareSection({ items, query, token }) {
   const [launching, setLaunching] = useState('');
 
   function getSsoAppSlug(item) {
+    if (item.name === 'Tele-Sales') return 'Pulse CRM';
     if (item.name === 'Client Sheet') return 'client-sheet';
     return '';
   }
