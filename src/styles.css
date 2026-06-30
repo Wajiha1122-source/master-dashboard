@@ -348,7 +348,8 @@ select {
 }
 
 .login-card label,
-.manager-form label {
+.manager-form label,
+.type-picker {
   display: grid;
   gap: 0.4rem;
   color: var(--soft);
@@ -373,6 +374,34 @@ select {
 
 .manager-form select option {
   color: #0f172a;
+}
+
+.type-picker > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+  min-height: 2.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.055);
+  padding: 0.35rem;
+}
+
+.type-picker button {
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  background: transparent;
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 0.76rem;
+  font-weight: 950;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.type-picker button.active,
+.type-picker button:hover {
+  border-color: rgba(112, 214, 255, 0.34);
+  background: rgba(112, 214, 255, 0.12);
+  color: var(--text);
 }
 
 .password-input {
@@ -557,10 +586,13 @@ select {
   position: relative;
   min-height: 16rem;
   overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: 1.15rem;
   padding: 1rem;
   color: inherit;
+  cursor: pointer;
   text-decoration: none;
+  text-align: left;
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
@@ -730,7 +762,32 @@ select {
 .manager-list {
   display: grid;
   gap: 0.65rem;
+}
+
+.existing-panel {
   margin-top: 1rem;
+}
+
+.existing-box {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0.85rem;
+}
+
+.existing-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.existing-head h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 950;
 }
 
 .manager-row {

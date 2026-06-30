@@ -96,6 +96,37 @@ app.get('/api/items', authenticate, async (req, res, next) => {
   }
 });
 
+app.post('/api/sso-token', authenticate, async (req, res) => {
+  const appName = String(req.body.app || '').trim();
+  const targetUrl = String(req.body.targetUrl || '').trim();
+
+  if (!appName || !targetUrl || targetUrl.startsWith('#')) {
+    return res.status(400).json({ message: 'A valid software app and URL are required.' });
+  }
+
+  const baseUrl = targetUrl.replace(/\/+$/, '');
+  const token = jwt.sign(
+    {
+      masterUser: req.user.username,
+      role: 'ceo',
+      app: appName,
+      targetUrl: baseUrl,
+    },
+    process.env.SSO_SECRET || jwtSecret,
+    {
+      expiresIn: '60s',
+      issuer: 'fjgroup-master-dashboard',
+      audience: appName,
+    },
+  );
+
+  return res.json({
+    token,
+    launchUrl: `${baseUrl}/sso-login?token=${encodeURIComponent(token)}`,
+    expiresIn: 60,
+  });
+});
+
 app.post('/api/items', authenticate, async (req, res, next) => {
   try {
     const item = normalizeItem(req.body);

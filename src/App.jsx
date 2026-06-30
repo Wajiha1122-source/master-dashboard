@@ -4,8 +4,6 @@ import {
   BarChart3,
   Boxes,
   Building2,
-  Check,
-  Copy,
   Eye,
   EyeOff,
   Facebook,
@@ -21,10 +19,10 @@ import {
   Plus,
   Save,
   Search,
-  ShieldCheck,
   ShoppingCart,
   Trash2,
   UsersRound,
+  X,
   Youtube,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -223,7 +221,6 @@ function Header({ query, setQuery, user, onLogout }) {
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search access..." />
           </label>
           <a className="gold-button" href="#manager"><Plus className="h-4 w-4" /> Add</a>
-          <a className="gold-button" href="#vault"><KeyRound className="h-4 w-4" /> Vault</a>
           <button className="ghost-button" type="button" onClick={onLogout} title={user?.username || 'Logout'}>
             <LogOut className="h-4 w-4" />
           </button>
@@ -259,8 +256,43 @@ function IntroPanel({ summary }) {
   );
 }
 
-function SoftwareSection({ items, query }) {
+function SoftwareSection({ items, query, token }) {
   const visibleItems = items.filter((item) => `${item.name} ${item.label || ''} ${item.description || ''}`.toLowerCase().includes(query.toLowerCase()));
+  const [launching, setLaunching] = useState('');
+
+  function getSsoAppSlug(item) {
+    if (item.name === 'Client Sheet') return 'client-sheet';
+    return '';
+  }
+
+  async function launchSoftware(item) {
+    const ssoApp = getSsoAppSlug(item);
+
+    if (!ssoApp || !item.url || item.url.startsWith('#')) {
+      window.open(item.url || '#', '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    const tab = window.open('', '_blank', 'noopener,noreferrer');
+    setLaunching(item.id);
+    try {
+      const data = await apiFetch('/api/sso-token', token, {
+        method: 'POST',
+        body: JSON.stringify({ app: ssoApp, targetUrl: item.url }),
+      });
+      if (tab) {
+        tab.location.href = data.launchUrl;
+      } else {
+        window.location.href = data.launchUrl;
+      }
+    } catch (error) {
+      if (tab) tab.close();
+      window.open(item.url, '_blank', 'noopener,noreferrer');
+    } finally {
+      setLaunching('');
+    }
+  }
+
   return (
     <section className="page-section">
       <SectionTitle eyebrow="Software" title="Core launch buttons" count={visibleItems.length} />
@@ -268,15 +300,15 @@ function SoftwareSection({ items, query }) {
         {visibleItems.map((item, index) => {
           const Icon = getIcon(item);
           return (
-            <motion.a className="software-tile" href={item.url} target="_blank" rel="noreferrer" key={item.id} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} whileHover={{ y: -6 }}>
+            <motion.button className="software-tile" type="button" onClick={() => launchSoftware(item)} key={item.id} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} whileHover={{ y: -6 }}>
               <div className="tile-top">
-                <span>{item.label}</span>
+                <span>{launching === item.id ? 'Creating SSO token' : item.label}</span>
                 <ArrowUpRight className="h-5 w-5" />
               </div>
               <Icon className="tile-icon" />
               <h3>{item.name}</h3>
               <p>{item.description}</p>
-            </motion.a>
+            </motion.button>
           );
         })}
       </div>
@@ -352,70 +384,12 @@ function SectionTitle({ eyebrow, title, count }) {
   );
 }
 
-function Vault({ items }) {
-  const [visible, setVisible] = useState({});
-  const [copied, setCopied] = useState('');
-
-  async function copyValue(value, label) {
-    await navigator.clipboard.writeText(value);
-    setCopied(label);
-    window.setTimeout(() => setCopied(''), 1300);
-  }
-
-  return (
-    <section id="vault" className="page-section">
-      <div className="vault-shell">
-        <div className="vault-title">
-          <div>
-            <p className="section-eyebrow">Saved passwords</p>
-            <h2>Saved access vault</h2>
-            <span><ShieldCheck className="h-4 w-4" /> Stored in the connected database</span>
-          </div>
-        </div>
-        <div className="vault-list">
-          {items.map((record) => {
-            const isVisible = visible[record.id];
-            return (
-              <motion.div layout className="vault-card" key={record.id}>
-                <div className="vault-main">
-                  <div>
-                    <p>{record.company}</p>
-                    <h3>{record.label}</h3>
-                  </div>
-                  <VaultField label="Login" value={record.username} onCopy={() => copyValue(record.username, `${record.label} login`)} copied={copied === `${record.label} login`} />
-                  <VaultField label="Password" value={record.password} hidden={!isVisible} onCopy={() => copyValue(record.password, `${record.label} password`)} copied={copied === `${record.label} password`} onToggle={() => setVisible((current) => ({ ...current, [record.id]: !current[record.id] }))} />
-                  <div className="vault-actions">
-                    {record.url ? <a className="icon-button" href={record.url} target="_blank" rel="noreferrer"><ArrowUpRight className="h-4 w-4" /></a> : null}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-          {!items.length ? <div className="empty-state">No vault passwords saved yet.</div> : null}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function VaultField({ label, value, hidden, onCopy, copied, onToggle }) {
-  return (
-    <div>
-      <span className="field-label">{label}</span>
-      <div className="copy-row">
-        <strong>{hidden ? '************' : value}</strong>
-        {onToggle ? <button type="button" onClick={onToggle}>{hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</button> : null}
-        <button type="button" onClick={onCopy}>{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</button>
-      </div>
-    </div>
-  );
-}
-
 function Manager({ items, token, onChanged }) {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showExisting, setShowExisting] = useState(false);
 
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -487,15 +461,21 @@ function Manager({ items, token, onChanged }) {
           <span>{String(items.length).padStart(2, '0')}</span>
         </div>
         <form className="manager-form" onSubmit={handleSubmit}>
-          <label>
-            Type
-            <select value={form.type} onChange={(event) => updateField('type', event.target.value)}>
-              <option value="software">Software</option>
-              <option value="website">Website</option>
-              <option value="social">Social Media</option>
-              <option value="vault">Vault Password</option>
-            </select>
-          </label>
+          <div className="type-picker">
+            <span>Type</span>
+            <div>
+              {[
+                ['software', 'Software'],
+                ['website', 'Website'],
+                ['social', 'Social'],
+                ['vault', 'Vault'],
+              ].map(([value, label]) => (
+                <button className={form.type === value ? 'active' : ''} type="button" key={value} onClick={() => updateField('type', value)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <label>
             Name
             <input value={form.name} onChange={(event) => updateField('name', event.target.value)} placeholder="Client Sheet" />
@@ -537,22 +517,42 @@ function Manager({ items, token, onChanged }) {
             {message ? <span>{message}</span> : null}
           </div>
         </form>
-        <div className="manager-list">
-          {items.map((item) => (
-            <div className="manager-row" key={item.id}>
-              <div>
-                <p>{item.type}</p>
-                <strong>{item.name}</strong>
-                <span>{item.url || item.username || 'No link saved'}</span>
+        <div className="existing-panel">
+          {!showExisting ? (
+            <button className="gold-button" type="button" onClick={() => setShowExisting(true)}>
+              <Eye className="h-4 w-4" />
+              Existing stuff
+            </button>
+          ) : (
+            <motion.div className="existing-box" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="existing-head">
+                <div>
+                  <p className="section-eyebrow">Existing stuff</p>
+                  <h3>Saved dashboard records</h3>
+                </div>
+                <button className="icon-button" type="button" onClick={() => setShowExisting(false)} aria-label="Close existing records">
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <button className="icon-button" type="button" onClick={() => startEdit(item)} aria-label={`Edit ${item.name}`}>
-                <Pencil className="h-4 w-4" />
-              </button>
-              <button className="icon-button danger-button" type="button" onClick={() => removeItem(item.id)} aria-label={`Delete ${item.name}`}>
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+              <div className="manager-list">
+                {items.map((item) => (
+                  <div className="manager-row" key={item.id}>
+                    <div>
+                      <p>{item.type}</p>
+                      <strong>{item.name}</strong>
+                      <span>{item.type === 'vault' ? item.username || 'Vault record' : item.url || 'No link saved'}</span>
+                    </div>
+                    <button className="icon-button" type="button" onClick={() => startEdit(item)} aria-label={`Edit ${item.name}`}>
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button className="icon-button danger-button" type="button" onClick={() => removeItem(item.id)} aria-label={`Delete ${item.name}`}>
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
@@ -648,10 +648,9 @@ export default function App() {
       <main className="relative z-10 pb-12">
         <IntroPanel summary={summary} />
         {dataError ? <div className="page-section"><div className="form-error">{dataError}</div></div> : null}
-        <SoftwareSection items={buckets.software} query={query} />
+        <SoftwareSection items={buckets.software} query={query} token={token} />
         <WebsiteSection items={buckets.website} />
         <SocialSection items={buckets.social} />
-        <Vault items={buckets.vault} />
         <Manager items={items} token={token} onChanged={() => loadItems(token)} />
       </main>
     </div>
