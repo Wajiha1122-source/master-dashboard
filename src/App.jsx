@@ -282,20 +282,14 @@ function SoftwareSection({ items, query, token }) {
       return;
     }
 
-    const tab = window.open('', '_blank', 'noopener,noreferrer');
     setLaunching(item.id);
     try {
       const data = await apiFetch('/api/sso-token', token, {
         method: 'POST',
         body: JSON.stringify({ app: ssoApp, targetUrl }),
       });
-      if (tab) {
-        tab.location.href = data.launchUrl;
-      } else {
-        window.location.href = data.launchUrl;
-      }
+      window.open(data.launchUrl, '_blank', 'noopener,noreferrer');
     } catch (error) {
-      if (tab) tab.close();
       window.open(item.url, '_blank', 'noopener,noreferrer');
     } finally {
       setLaunching('');
