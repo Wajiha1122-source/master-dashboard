@@ -262,6 +262,7 @@ function SoftwareSection({ items, query, token }) {
 
   function getSsoAppSlug(item) {
     if (item.name === 'Tele-Sales') return 'Pulse CRM';
+    if (item.name === 'Performance Dashboard') return 'employee-performance-dashboard';
     if (item.name === 'Client Sheet') return 'client-sheet';
     if (item.name === 'Inventory Overview') return 'Irshad-Company-Overview';
     return '';
