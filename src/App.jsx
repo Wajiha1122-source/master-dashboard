@@ -269,7 +269,7 @@ function SoftwareSection({ items, query, token }) {
   }
 
   function getSsoTargetUrl(item) {
-    if (item.name === 'Performance Dashboard') return 'https://performance-dashboard.onrender.com';
+    if (item.name === 'Performance Dashboard') return 'https://performance-dashboard-d1ae.onrender.com';
     return item.url;
   }
 
