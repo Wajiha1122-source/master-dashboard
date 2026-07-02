@@ -268,10 +268,16 @@ function SoftwareSection({ items, query, token }) {
     return '';
   }
 
+  function getSsoTargetUrl(item) {
+    if (item.name === 'Performance Dashboard') return 'https://employee-performance-api.onrender.com';
+    return item.url;
+  }
+
   async function launchSoftware(item) {
     const ssoApp = getSsoAppSlug(item);
+    const targetUrl = getSsoTargetUrl(item);
 
-    if (!ssoApp || !item.url || item.url.startsWith('#')) {
+    if (!ssoApp || !targetUrl || targetUrl.startsWith('#')) {
       window.open(item.url || '#', '_blank', 'noopener,noreferrer');
       return;
     }
@@ -281,7 +287,7 @@ function SoftwareSection({ items, query, token }) {
     try {
       const data = await apiFetch('/api/sso-token', token, {
         method: 'POST',
-        body: JSON.stringify({ app: ssoApp, targetUrl: item.url }),
+        body: JSON.stringify({ app: ssoApp, targetUrl }),
       });
       if (tab) {
         tab.location.href = data.launchUrl;
