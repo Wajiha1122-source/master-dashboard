@@ -12,6 +12,13 @@ const app = express();
 const port = Number(process.env.PORT || 5000);
 const jwtSecret = process.env.JWT_SECRET || 'change-this-secret-before-deploy';
 const clients = new Set();
+const canonicalSsoTargets = {
+  'Pulse CRM': process.env.TELE_SALES_URL || 'https://tele-sales-client.vercel.app',
+};
+
+function resolveSsoTarget(appName, targetUrl) {
+  return canonicalSsoTargets[appName] || targetUrl;
+}
 
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || true }));
 app.use(express.json({ limit: '1mb' }));
@@ -104,7 +111,7 @@ app.post('/api/sso-token', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'A valid software app and URL are required.' });
   }
 
-  const baseUrl = targetUrl.replace(/\/+$/, '');
+  const baseUrl = resolveSsoTarget(appName, targetUrl).replace(/\/+$/, '');
   const token = jwt.sign(
     {
       masterUser: req.user.username,

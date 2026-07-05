@@ -1,6 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { authenticate, handleError, parseBody, ready, send } from './_shared.js';
 
+const canonicalSsoTargets = {
+  'Pulse CRM': process.env.TELE_SALES_URL || 'https://tele-sales-client.vercel.app',
+};
+
+function resolveSsoTarget(appName, targetUrl) {
+  return canonicalSsoTargets[appName] || targetUrl;
+}
+
 export default async function handler(req, res) {
   try {
     await ready;
@@ -15,7 +23,7 @@ export default async function handler(req, res) {
       return send(res, 400, { message: 'A valid software app and URL are required.' });
     }
 
-    const baseUrl = targetUrl.replace(/\/+$/, '');
+    const baseUrl = resolveSsoTarget(appName, targetUrl).replace(/\/+$/, '');
     const token = jwt.sign(
       {
         masterUser: user.username,
