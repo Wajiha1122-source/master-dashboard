@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   Facebook,
-  Globe2,
   Instagram,
   KeyRound,
   Landmark,
@@ -230,32 +229,6 @@ function Header({ query, setQuery, user, onLogout }) {
   );
 }
 
-function IntroPanel({ summary }) {
-  return (
-    <section className="mx-auto max-w-7xl px-4 pb-5 pt-7 sm:px-6 lg:px-8">
-      <motion.div className="intro-panel" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-        <div>
-          <p className="section-eyebrow">CEO launcher</p>
-          <h1>Premium access control for daily decisions.</h1>
-          <p>All important software, websites, social channels, and saved logins in one refined command screen.</p>
-        </div>
-        <div className="summary-grid">
-          {summary.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div className="summary-pill" key={item.label}>
-                <Icon className="h-4 w-4" />
-                <strong>{item.value}</strong>
-                <span>{item.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
 function SoftwareSection({ items, query, token }) {
   const visibleItems = items.filter((item) => `${item.name} ${item.label || ''} ${item.description || ''}`.toLowerCase().includes(query.toLowerCase()));
   const [launching, setLaunching] = useState('');
@@ -298,7 +271,7 @@ function SoftwareSection({ items, query, token }) {
 
   return (
     <section className="page-section">
-      <SectionTitle eyebrow="Software" title="Core launch buttons" count={visibleItems.length} />
+      <SectionTitle eyebrow="Software" title="Software" count={visibleItems.length} />
       <div className="software-grid">
         {visibleItems.map((item, index) => {
           const Icon = getIcon(item);
@@ -590,13 +563,6 @@ export default function App() {
     vault: items.filter((item) => item.type === 'vault'),
   }), [items]);
 
-  const summary = useMemo(() => [
-    { label: 'Software', value: String(buckets.software.length).padStart(2, '0'), icon: MonitorCog },
-    { label: 'Websites', value: String(buckets.website.length).padStart(2, '0'), icon: Globe2 },
-    { label: 'Companies', value: String(new Set(items.map((item) => item.company).filter(Boolean)).size).padStart(2, '0'), icon: Building2 },
-    { label: 'Social Channels', value: String(buckets.social.length).padStart(2, '0'), icon: Instagram },
-  ], [buckets, items]);
-
   async function loadItems(activeToken = token) {
     if (!activeToken) return;
     try {
@@ -649,7 +615,6 @@ export default function App() {
       <div className="site-bg" />
       <Header query={query} setQuery={setQuery} user={user} onLogout={handleLogout} />
       <main className="relative z-10 pb-12">
-        <IntroPanel summary={summary} />
         {dataError ? <div className="page-section"><div className="form-error">{dataError}</div></div> : null}
         <SoftwareSection items={buckets.software} query={query} token={token} />
         <WebsiteSection items={buckets.website} />

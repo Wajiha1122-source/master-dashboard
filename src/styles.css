@@ -442,21 +442,6 @@ select {
   font-weight: 800;
 }
 
-.intro-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1.5rem;
-  align-items: center;
-  border: 1px solid var(--line);
-  border-radius: 1.35rem;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035)),
-    radial-gradient(circle at 82% 20%, rgba(112, 214, 255, 0.13), transparent 16rem);
-  padding: 1.35rem;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(20px);
-}
-
 .section-eyebrow {
   margin: 0 0 0.4rem;
   color: var(--accent);
@@ -466,56 +451,10 @@ select {
   text-transform: uppercase;
 }
 
-.intro-panel h1 {
-  margin: 0;
-  color: var(--text);
-  font-size: clamp(1.6rem, 4vw, 3.15rem);
-  font-weight: 950;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.intro-panel p:last-child {
-  margin: 0.75rem 0 0;
-  max-width: 46rem;
-  color: var(--muted);
-  line-height: 1.7;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(8.5rem, 1fr));
-  gap: 0.75rem;
-}
-
-.summary-pill {
-  display: grid;
-  gap: 0.18rem;
-  min-height: 5.2rem;
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.045);
-  padding: 0.85rem;
-}
-
-.summary-pill svg,
 .tile-icon,
 .website-card svg,
 .social-links svg {
   color: var(--accent);
-}
-
-.summary-pill strong {
-  color: var(--text);
-  font-size: 1.35rem;
-  line-height: 1;
-}
-
-.summary-pill span {
-  color: var(--soft);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
 }
 
 .page-section {
@@ -996,7 +935,6 @@ select {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .intro-panel,
   .vault-main {
     grid-template-columns: 1fr;
   }
@@ -1007,7 +945,6 @@ select {
 }
 
 @media (max-width: 760px) {
-  .summary-grid,
   .website-row,
   .social-grid,
   .social-links {
