@@ -10,7 +10,6 @@ import {
   MonitorCog,
   PackageSearch,
   ShoppingCart,
-  UsersRound,
   Youtube,
 } from 'lucide-react';
 
@@ -42,13 +41,6 @@ export const softwareLinks = [
     description: 'Irshad & Company overview for inventory and business movement.',
     icon: PackageSearch,
     link: 'https://irshad-company-overview.vercel.app/',
-  },
-  {
-    name: 'HR Software',
-    label: 'People',
-    description: 'Employee records, attendance, HR actions, and staff visibility.',
-    icon: UsersRound,
-    link: '#ADD-HR-SOFTWARE-LINK',
   },
 ];
 

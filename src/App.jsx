@@ -20,7 +20,6 @@ import {
   Search,
   ShoppingCart,
   Trash2,
-  UsersRound,
   X,
   Youtube,
 } from 'lucide-react';
@@ -45,7 +44,6 @@ const iconMap = {
   'Performance Dashboard': BarChart3,
   'Axon ERP': Boxes,
   'Inventory Overview': PackageSearch,
-  'HR Software': UsersRound,
   'Client Sheet': MonitorCog,
   Fjgroup: Building2,
   'Irshad & Company': Landmark,
@@ -230,7 +228,7 @@ function Header({ query, setQuery, user, onLogout }) {
 }
 
 function SoftwareSection({ items, query, token }) {
-  const visibleItems = items.filter((item) => `${item.name} ${item.label || ''} ${item.description || ''}`.toLowerCase().includes(query.toLowerCase()));
+  const visibleItems = items.filter((item) => item.name !== 'HR Software' && `${item.name} ${item.label || ''} ${item.description || ''}`.toLowerCase().includes(query.toLowerCase()));
   const [launching, setLaunching] = useState('');
 
   function getSsoAppSlug(item) {

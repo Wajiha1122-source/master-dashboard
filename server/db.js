@@ -48,14 +48,6 @@ const seedItems = [
     url: 'https://irshad-company-overview.vercel.app/',
   },
   {
-    id: 'hr-software',
-    type: 'software',
-    name: 'HR Software',
-    label: 'People',
-    description: 'Employee records, attendance, HR actions, and staff visibility.',
-    url: '#ADD-HR-SOFTWARE-LINK',
-  },
-  {
     id: 'client-sheet',
     type: 'software',
     name: 'Client Sheet',
